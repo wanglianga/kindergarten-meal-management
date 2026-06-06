@@ -22,6 +22,13 @@ import type {
   EscortReviewStatistics,
   RecipeByDate,
   PaginatedResult,
+  AllergyChild,
+  CreateAllergyChildDto,
+  AllergenSummary,
+  MealDistribution,
+  CreateMealDistributionDto,
+  DistributionChecklist,
+  RiskStatistics,
 } from '@/types';
 
 export type {
@@ -47,6 +54,13 @@ export type {
   EscortReviewStatistics,
   RecipeByDate,
   PaginatedResult,
+  AllergyChild,
+  CreateAllergyChildDto,
+  AllergenSummary,
+  MealDistribution,
+  CreateMealDistributionDto,
+  DistributionChecklist,
+  RiskStatistics,
 };
 
 export interface ListParams {
@@ -145,10 +159,10 @@ export const recipes = {
     request.post('/recipes', data),
   list: (params?: ListParams): Promise<PaginatedResult<Recipe>> =>
     request.get('/recipes', { params }),
-  findByDate: (date: string): Promise<RecipeByDate> =>
-    request.get(`/recipes/by-date/${date}`),
-  getByDate: (date: string): Promise<RecipeByDate> =>
-    request.get(`/recipes/by-date/${date}`),
+  findByDate: (date: string, className?: string): Promise<RecipeByDate> =>
+    request.get(`/recipes/by-date/${date}`, { params: className ? { className } : {} }),
+  getByDate: (date: string, className?: string): Promise<RecipeByDate> =>
+    request.get(`/recipes/by-date/${date}`, { params: className ? { className } : {} }),
   get: (id: number): Promise<Recipe> => request.get(`/recipes/${id}`),
   update: (id: number, data: Partial<CreateRecipeDto>): Promise<Recipe> =>
     request.put(`/recipes/${id}`, data),
@@ -233,6 +247,55 @@ export const alerts = {
   remove: (id: number): Promise<void> => request.delete(`/alerts/${id}`),
   getActiveCount: (): Promise<CountResponse> =>
     request.get('/alerts/active-count'),
+};
+
+export const allergyChildren = {
+  create: (data: CreateAllergyChildDto): Promise<AllergyChild> =>
+    request.post('/allergy-children', data),
+  list: (params?: ListParams): Promise<PaginatedResult<AllergyChild>> =>
+    request.get('/allergy-children', { params }),
+  findByClassName: (className: string): Promise<AllergyChild[]> =>
+    request.get(`/allergy-children/by-class/${className}`),
+  getSummary: (className?: string): Promise<AllergenSummary> =>
+    request.get('/allergy-children/summary', { params: className ? { className } : {} }),
+  get: (id: number): Promise<AllergyChild> =>
+    request.get(`/allergy-children/${id}`),
+  update: (
+    id: number,
+    data: Partial<CreateAllergyChildDto>
+  ): Promise<AllergyChild> => request.put(`/allergy-children/${id}`, data),
+  remove: (id: number): Promise<void> =>
+    request.delete(`/allergy-children/${id}`),
+};
+
+export const mealDistributions = {
+  create: (data: CreateMealDistributionDto): Promise<MealDistribution> =>
+    request.post('/meal-distributions', data),
+  list: (params?: ListParams): Promise<PaginatedResult<MealDistribution>> =>
+    request.get('/meal-distributions', { params }),
+  getChecklist: (
+    date: string,
+    className: string,
+    mealType: string
+  ): Promise<DistributionChecklist> =>
+    request.get('/meal-distributions/checklist', {
+      params: { date, className, mealType },
+    }),
+  getRiskStatistics: (date?: string): Promise<RiskStatistics> =>
+    request.get('/meal-distributions/risk-statistics', {
+      params: date ? { date } : {},
+    }),
+  get: (id: number): Promise<MealDistribution> =>
+    request.get(`/meal-distributions/${id}`),
+  update: (
+    id: number,
+    data: Partial<CreateMealDistributionDto>
+  ): Promise<MealDistribution> =>
+    request.put(`/meal-distributions/${id}`, data),
+  confirm: (id: number, confirmedBy: string): Promise<MealDistribution> =>
+    request.post(`/meal-distributions/${id}/confirm`, { confirmedBy }),
+  remove: (id: number): Promise<void> =>
+    request.delete(`/meal-distributions/${id}`),
 };
 
 export default request;

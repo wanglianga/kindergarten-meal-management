@@ -7,6 +7,8 @@ import {
   StarOutlined,
   WarningOutlined,
   AlertOutlined,
+  UserOutlined,
+  SafetyCertificateOutlined,
 } from '@ant-design/icons';
 import type { AppMenuItem } from './types';
 
@@ -73,6 +75,41 @@ export const MENU_ITEMS: AppMenuItem[] = [
     icon: <CoffeeOutlined />,
     roles: ['regulator'],
     path: '/classroom-meals',
+  },
+  {
+    key: 'allergy-children-teacher',
+    label: '过敏名单管理',
+    icon: <UserOutlined />,
+    roles: ['teacher'],
+    path: '/allergy-children',
+  },
+  {
+    key: 'allergy-children-logistics',
+    label: '过敏名单管理',
+    icon: <UserOutlined />,
+    roles: ['logistics', 'regulator'],
+    path: '/allergy-children',
+  },
+  {
+    key: 'meal-distributions-teacher',
+    label: '过敏餐盘核对',
+    icon: <SafetyCertificateOutlined />,
+    roles: ['teacher'],
+    path: '/meal-distributions',
+  },
+  {
+    key: 'meal-distributions-logistics',
+    label: '过敏餐盘核对',
+    icon: <SafetyCertificateOutlined />,
+    roles: ['logistics'],
+    path: '/meal-distributions',
+  },
+  {
+    key: 'meal-distributions-view',
+    label: '过敏餐盘核对',
+    icon: <SafetyCertificateOutlined />,
+    roles: ['regulator'],
+    path: '/meal-distributions',
   },
   {
     key: 'escort-reviews-parent',

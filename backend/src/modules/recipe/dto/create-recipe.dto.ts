@@ -21,6 +21,10 @@ export class CreateRecipeDto {
   @IsOptional()
   ingredientBatchIds?: number[];
 
+  @IsArray()
+  @IsOptional()
+  allergens?: string[];
+
   @IsString()
   @IsOptional()
   photo?: string;

@@ -8,6 +8,9 @@ export class Alert {
   @Column()
   type: string;
 
+  @Column({ nullable: true })
+  title: string;
+
   @Column({ type: 'text' })
   message: string;
 

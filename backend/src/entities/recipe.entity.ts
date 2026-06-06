@@ -25,6 +25,9 @@ export class Recipe {
   @Column({ nullable: true })
   photo: string;
 
+  @Column({ type: 'simple-array', default: '' })
+  allergens: string[];
+
   @Column({ default: 'published' })
   status: string;
 

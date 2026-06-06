@@ -33,6 +33,8 @@
 
 > 建设一个给民办幼儿园后勤、班级老师、家长代表和市场监管人员使用的膳食管理系统，React 页面呈现菜谱、留样、陪餐和整改情况，NestJS 保存食材批次、供应商、留样记录和反馈闭环。后勤登记每日菜谱、食材来源、验收照片、留样盒编号和留样时间；班级老师记录幼儿过敏、剩餐和临时忌口；家长代表提交陪餐评价、照片和建议；监管人员查看食材票据、留样记录和整改结果。系统要把采购验收、菜谱发布、留样登记、班级用餐、家长陪餐、问题整改连起来。过敏幼儿误配、留样过期、供应商批次异常、家长集中差评要落到各自处置。
 
+> 请修复前端 TypeScript 构建失败问题，重点统一 src/api/index.ts 的导出类型、返回值结构和各业务页面调用方式，处理供应商、班级用餐、陪餐评价页面里的 getAll/delete/list/remove、id 类型、DTO 类型和未使用导入等错误。修复后重新执行 Docker 构建启动，并打开页面完成登录与核心业务链路验证。
+
 ## 启动方式
 
 ### 前置要求
@@ -125,8 +127,8 @@ wmy-23/
 ├── backend/                     # NestJS 后端
 │   ├── src/
 │   │   ├── common/              # 公共装饰器、守卫、枚举
-│   │   ├── entities/            # TypeORM 实体（9 张表）
-│   │   ├── modules/             # 9 个业务模块
+│   │   ├── entities/            # TypeORM 实体（11 张表）
+│   │   ├── modules/             # 11 个业务模块
 │   │   ├── app.module.ts
 │   │   ├── main.ts
 │   │   └── seed.ts              # 种子数据脚本
@@ -138,7 +140,7 @@ wmy-23/
 │   │   ├── api/                 # Axios API 封装
 │   │   ├── components/          # 公共组件（Layout）
 │   │   ├── context/             # React Context（用户状态）
-│   │   ├── pages/               # 8 个业务页面
+│   │   ├── pages/               # 10 个业务页面
 │   │   ├── types/               # TypeScript 类型定义
 │   │   ├── App.tsx
 │   │   ├── main.tsx
@@ -149,6 +151,7 @@ wmy-23/
 ├── docker-compose.yml           # 根目录编排文件
 ├── Dockerfile                   # 根目录多阶段构建（可选）
 ├── .dockerignore
+├── .done                        # 任务执行过程记录
 └── README.md
 ```
 
@@ -159,9 +162,11 @@ wmy-23/
 | 认证 | /auth/* | 登录、用户信息、角色权限 |
 | 供应商 | /suppliers/* | 供应商 CRUD |
 | 食材批次 | /ingredient-batches/* | 批次管理、过期检查 |
-| 菜谱 | /recipes/* | 按日期查询、CRUD、关联食材 |
+| 菜谱 | /recipes/* | 按日期查询（支持班级过敏标记）、CRUD、过敏原管理 |
 | 留样 | /samples/* | 留样登记、销毁、过期检查 |
 | 班级用餐 | /classroom-meals/* | 用餐登记、过敏风险 |
+| 过敏名单 | /allergy-children/* | 过敏幼儿 CRUD、按班级查询、过敏原汇总 |
+| 分餐核对 | /meal-distributions/* | 核对清单生成、分餐记录（替代餐+照片+确认人）、误配风险告警、风险统计 |
 | 陪餐评价 | /escort-reviews/* | 评价提交、差评标记、统计 |
 | 整改 | /rectifications/* | 整改单 CRUD、状态流转 |
-| 告警 | /alerts/* | 告警列表、处理、定时扫描（30 分钟/次） |
+| 告警 | /alerts/* | 告警列表、处理、定时扫描（30 分钟/次，含过敏误配告警） |

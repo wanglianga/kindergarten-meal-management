@@ -13,6 +13,8 @@ import { ClassroomMealModule } from './modules/classroom-meal/classroom-meal.mod
 import { EscortReviewModule } from './modules/escort-review/escort-review.module';
 import { RectificationModule } from './modules/rectification/rectification.module';
 import { AlertModule } from './modules/alert/alert.module';
+import { AllergyChildModule } from './modules/allergy-child/allergy-child.module';
+import { MealDistributionModule } from './modules/meal-distribution/meal-distribution.module';
 import { User } from './entities/user.entity';
 import { Supplier } from './entities/supplier.entity';
 import { IngredientBatch } from './entities/ingredient-batch.entity';
@@ -22,6 +24,8 @@ import { ClassroomMeal } from './entities/classroom-meal.entity';
 import { EscortReview } from './entities/escort-review.entity';
 import { Rectification } from './entities/rectification.entity';
 import { Alert } from './entities/alert.entity';
+import { AllergyChild } from './entities/allergy-child.entity';
+import { MealDistribution } from './entities/meal-distribution.entity';
 
 const dataDir = join(process.cwd(), 'data');
 if (!fs.existsSync(dataDir)) {
@@ -49,6 +53,8 @@ if (!fs.existsSync(dataDir)) {
             EscortReview,
             Rectification,
             Alert,
+            AllergyChild,
+            MealDistribution,
           ],
           synchronize: true,
           logging: false,
@@ -64,6 +70,8 @@ if (!fs.existsSync(dataDir)) {
     EscortReviewModule,
     RectificationModule,
     AlertModule,
+    AllergyChildModule,
+    MealDistributionModule,
   ],
 })
 export class AppModule {}

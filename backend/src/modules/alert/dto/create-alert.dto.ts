@@ -5,6 +5,10 @@ export class CreateAlertDto {
   type: string;
 
   @IsString()
+  @IsOptional()
+  title?: string;
+
+  @IsString()
   message: string;
 
   @IsOptional()

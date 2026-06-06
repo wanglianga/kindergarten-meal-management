@@ -12,6 +12,8 @@ import ClassroomMealsPage from './pages/ClassroomMealsPage';
 import EscortReviewsPage from './pages/EscortReviewsPage';
 import RectificationsPage from './pages/RectificationsPage';
 import AlertsPage from './pages/AlertsPage';
+import AllergyChildrenPage from './pages/AllergyChildrenPage';
+import MealDistributionsPage from './pages/MealDistributionsPage';
 import type { UserRole } from './types';
 
 const ROLE_ROUTES: Record<string, string[]> = {
@@ -21,6 +23,8 @@ const ROLE_ROUTES: Record<string, string[]> = {
     '/samples',
     '/suppliers',
     '/classroom-meals',
+    '/allergy-children',
+    '/meal-distributions',
     '/escort-reviews',
     '/rectifications',
     '/alerts',
@@ -30,6 +34,8 @@ const ROLE_ROUTES: Record<string, string[]> = {
     '/recipes',
     '/samples',
     '/classroom-meals',
+    '/allergy-children',
+    '/meal-distributions',
     '/escort-reviews',
   ],
   parent: [
@@ -44,6 +50,8 @@ const ROLE_ROUTES: Record<string, string[]> = {
     '/samples',
     '/suppliers',
     '/classroom-meals',
+    '/allergy-children',
+    '/meal-distributions',
     '/escort-reviews',
     '/rectifications',
     '/alerts',
@@ -134,6 +142,26 @@ const App: React.FC = () => {
             <ProtectedRoute allowedRoles={['teacher', 'logistics', 'regulator']}>
               <AppLayout>
                 <ClassroomMealsPage />
+              </AppLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/allergy-children"
+          element={
+            <ProtectedRoute allowedRoles={['teacher', 'logistics', 'regulator']}>
+              <AppLayout>
+                <AllergyChildrenPage />
+              </AppLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/meal-distributions"
+          element={
+            <ProtectedRoute allowedRoles={['teacher', 'logistics', 'regulator']}>
+              <AppLayout>
+                <MealDistributionsPage />
               </AppLayout>
             </ProtectedRoute>
           }

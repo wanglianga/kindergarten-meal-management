@@ -168,10 +168,14 @@ export interface Recipe {
   dishName: string;
   description?: string;
   ingredientBatches?: IngredientBatch[];
+  allergens?: string[];
   photo?: string;
   status: string;
   createdAt?: string;
   updatedAt?: string;
+  hasAllergyRisk?: boolean;
+  matchedAllergens?: string[];
+  affectedChildren?: string[];
   breakfast?: Recipe[];
   lunch?: Recipe[];
   dinner?: Recipe[];
@@ -280,6 +284,7 @@ export interface CreateRecipeDto {
   dishName: string;
   description?: string;
   ingredientBatchIds?: number[];
+  allergens?: string[];
   photo?: string;
   status?: string;
 }
@@ -359,6 +364,9 @@ export interface RecipeByDate {
   breakfast: Recipe[];
   lunch: Recipe[];
   dinner: Recipe[];
+  className?: string;
+  allergyChildren?: AllergyChild[];
+  allClassAllergens?: string[];
 }
 
 export interface PaginatedResult<T> {
@@ -368,4 +376,100 @@ export interface PaginatedResult<T> {
   total: number;
   page: number;
   pageSize: number;
+}
+
+export interface AllergyChild {
+  id: number;
+  childName: string;
+  className: string;
+  allergens: string[];
+  remark?: string;
+  isActive: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface CreateAllergyChildDto {
+  childName: string;
+  className: string;
+  allergens?: string[];
+  remark?: string;
+  isActive?: boolean;
+}
+
+export interface AllergenSummary {
+  totalChildren: number;
+  allergenList: Array<{
+    allergen: string;
+    children: string[];
+    count: number;
+  }>;
+  children: AllergyChild[];
+}
+
+export interface MealDistribution {
+  id: number;
+  date: string;
+  className: string;
+  mealType: string;
+  childName: string;
+  childAllergens: string[];
+  restrictedDishes: string[];
+  substituteMeal?: string;
+  substitutePhotos: string[];
+  confirmedBy?: string;
+  confirmedAt?: string;
+  hasRisk: boolean;
+  riskDescription?: string;
+  status: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface CreateMealDistributionDto {
+  date: string;
+  className: string;
+  mealType: string;
+  childName: string;
+  childAllergens?: string[];
+  restrictedDishes?: string[];
+  substituteMeal?: string;
+  substitutePhotos?: string[];
+  confirmedBy?: string;
+  hasRisk?: boolean;
+  riskDescription?: string;
+  status?: string;
+}
+
+export interface DistributionChecklist {
+  date: string;
+  className: string;
+  mealType: string;
+  mealTypeLabel: string;
+  totalChildren: number;
+  riskChildren: number;
+  dishes: Array<{
+    id: number;
+    dishName: string;
+    allergens: string[];
+  }>;
+  checklist: Array<{
+    childId: number;
+    childName: string;
+    className: string;
+    childAllergens: string[];
+    restrictedDishes: string[];
+    safeDishes: string[];
+    hasRisk: boolean;
+  }>;
+}
+
+export interface RiskStatistics {
+  date: string;
+  totalRiskCount: number;
+  byClass: Array<{
+    className: string;
+    count: number;
+    records: MealDistribution[];
+  }>;
 }

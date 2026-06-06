@@ -23,8 +23,8 @@ export class RecipeController {
   }
 
   @Get('by-date/:date')
-  findByDate(@Param('date') date: string) {
-    return this.recipeService.findByDate(date);
+  findByDate(@Param('date') date: string, @Query('className') className?: string) {
+    return this.recipeService.findByDate(date, className);
   }
 
   @Post()
