@@ -9,7 +9,6 @@ import {
   Tag,
   Spin,
   Empty,
-  Divider,
   Space,
 } from 'antd';
 import {
@@ -19,9 +18,9 @@ import {
   AlertOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
-import { useUser } from '../context/UserContext';
-import { recipes, samples, rectifications, alerts } from '../api';
-import type { Recipe, Alert as AlertType, UserRole } from '../types';
+import { useUser } from '@/context/UserContext';
+import { recipes, samples, rectifications, alerts } from '@/api';
+import type { Alert as AlertType, UserRole, RecipeByDate } from '@/api';
 
 const { Title, Text } = Typography;
 
@@ -39,7 +38,7 @@ const Dashboard: React.FC = () => {
   const [sampleCount, setSampleCount] = useState(0);
   const [pendingRectCount, setPendingRectCount] = useState(0);
   const [activeAlertCount, setActiveAlertCount] = useState(0);
-  const [todayRecipe, setTodayRecipe] = useState<Recipe | null>(null);
+  const [todayRecipe, setTodayRecipe] = useState<RecipeByDate | null>(null);
   const [activeAlerts, setActiveAlerts] = useState<AlertType[]>([]);
 
   const today = dayjs().format('YYYY-MM-DD');
@@ -51,25 +50,25 @@ const Dashboard: React.FC = () => {
   const loadData = async () => {
     setLoading(true);
     try {
-      const [recipeRes, sampleRes, rectCountRes, alertCountRes, todayRecipeRes, alertsRes]: any =
+      const [recipeRes, sampleRes, rectCountRes, alertCountRes, todayRecipeRes, alertsRes] =
         await Promise.all([
-          recipes.list({ date: today }).catch(() => ({ data: [] })),
-          samples.list({ date: today }).catch(() => ({ data: [] })),
+          recipes.list({ date: today }).catch(() => ({ list: [], items: [], data: [], total: 0, page: 1, pageSize: 10 })),
+          samples.list({ date: today }).catch(() => ({ list: [], items: [], data: [], total: 0, page: 1, pageSize: 10 })),
           rectifications.getPendingCount().catch(() => ({ count: 0 })),
           alerts.getActiveCount().catch(() => ({ count: 0 })),
           recipes.getByDate(today).catch(() => null),
-          alerts.list('active').catch(() => ({ data: [] })),
+          alerts.list('active').catch(() => []),
         ]);
 
-      const recipesData = recipeRes?.data || recipeRes || [];
-      const samplesData = sampleRes?.data || sampleRes || [];
+      const recipesData = recipeRes?.list || recipeRes?.items || recipeRes?.data || [];
+      const samplesData = sampleRes?.list || sampleRes?.items || sampleRes?.data || [];
 
       setRecipeCount(Array.isArray(recipesData) ? recipesData.length : 0);
       setSampleCount(Array.isArray(samplesData) ? samplesData.length : 0);
-      setPendingRectCount(rectCountRes?.count ?? rectCountRes ?? 0);
-      setActiveAlertCount(alertCountRes?.count ?? alertCountRes ?? 0);
-      setTodayRecipe(todayRecipeRes?.data || todayRecipeRes || null);
-      setActiveAlerts(Array.isArray(alertsRes?.data || alertsRes) ? (alertsRes?.data || alertsRes) : []);
+      setPendingRectCount(rectCountRes?.count ?? 0);
+      setActiveAlertCount(alertCountRes?.count ?? 0);
+      setTodayRecipe(todayRecipeRes || null);
+      setActiveAlerts(Array.isArray(alertsRes) ? alertsRes : []);
     } catch (e) {
       console.error('Failed to load dashboard data', e);
     } finally {

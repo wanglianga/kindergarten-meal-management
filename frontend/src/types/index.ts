@@ -3,10 +3,15 @@ import type { ReactNode } from 'react';
 export type UserRole = 'logistics' | 'teacher' | 'parent' | 'regulator';
 
 export interface User {
-  id: string;
-  name: string;
+  id: number;
+  username: string;
+  realName: string;
+  name?: string;
   role: UserRole;
-  avatar?: string;
+  phone?: string;
+  className?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface AppMenuItem {
@@ -24,17 +29,6 @@ export interface Dish {
   description?: string;
   ingredients?: string[];
   allergens?: string[];
-}
-
-export interface Recipe {
-  id: string;
-  date: string;
-  breakfast: Dish[];
-  lunch: Dish[];
-  dinner: Dish[];
-  createdBy?: string;
-  createdAt?: string;
-  updatedAt?: string;
 }
 
 export interface RetentionSample {
@@ -80,28 +74,34 @@ export interface RectificationOrder {
 }
 
 export interface Supplier {
-  id: string;
+  id: number;
   name: string;
-  contact: string;
-  phone: string;
-  address: string;
-  licenseNo: string;
-  status: 'active' | 'inactive';
+  contactPerson?: string;
+  phone?: string;
+  address?: string;
+  businessLicense?: string;
+  isActive: boolean;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface IngredientBatch {
-  id: string;
-  batchNo: string;
+  id: number;
+  batchNumber: string;
   ingredientName: string;
-  supplierId: string;
-  supplierName: string;
   quantity: number;
   unit: string;
+  supplierId: number;
+  supplier?: Supplier;
   productionDate: string;
-  expiryDate: string;
-  inspectionStatus: 'passed' | 'failed' | 'pending';
-  receivedAt: string;
-  operator: string;
+  expirationDate: string;
+  receiveDate: string;
+  acceptancePhoto?: string;
+  invoicePhoto?: string;
+  status: string;
+  remark?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface Child {
@@ -161,42 +161,211 @@ export interface RectificationItem {
   updatedAt?: string;
 }
 
-export interface Alert {
-  id: string;
-  type: 'sample_expiry' | 'ingredient_expiry' | 'allergy_risk' | 'rectification_overdue';
-  title: string;
-  message: string;
-  status: 'active' | 'resolved';
-  relatedId?: string;
-  createdAt: string;
-  resolvedAt?: string;
-  resolvedBy?: string;
+export interface Recipe {
+  id: number;
+  date: string;
+  mealType: string;
+  dishName: string;
+  description?: string;
+  ingredientBatches?: IngredientBatch[];
+  photo?: string;
+  status: string;
+  createdAt?: string;
+  updatedAt?: string;
+  breakfast?: Recipe[];
+  lunch?: Recipe[];
+  dinner?: Recipe[];
+  name?: string;
 }
 
-export interface EscortReview {
-  id: string;
+export interface Sample {
+  id: number;
+  sampleBoxNumber: string;
   date: string;
-  mealType: 'breakfast' | 'lunch' | 'dinner';
-  rating: number;
-  tasteRating?: number;
-  hygieneRating?: number;
-  nutritionRating?: number;
-  photoUrl?: string;
-  suggestion?: string;
-  reviewerId: string;
-  reviewerName: string;
-  reviewerRole: string;
-  createdAt: string;
+  mealType: string;
+  dishName: string;
+  sampleTime: string;
+  sampler: string;
+  photo?: string;
+  status: string;
+  disposeTime?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface ClassroomMeal {
-  id: string;
+  id: number;
   date: string;
   className: string;
-  mealType: 'breakfast' | 'lunch' | 'dinner';
-  attendanceCount: number;
-  allergyRisks?: string[];
-  recordedBy: string;
-  notes?: string;
-  createdAt: string;
+  mealType: string;
+  allergies?: string;
+  tempRestrictions?: string;
+  leftovers?: string;
+  leftoverCount: number;
+  recorder?: string;
+  remark?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface EscortReview {
+  id: number;
+  date: string;
+  parentName: string;
+  className?: string;
+  rating: number;
+  photo?: string;
+  suggestion?: string;
+  isNegative: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface Alert {
+  id: number;
+  type: string;
+  title?: string;
+  message: string;
+  status: string;
+  relatedId?: number;
+  alertDate?: string;
+  hasRectification: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface Rectification {
+  id: number;
+  alertType: string;
+  relatedId?: number;
+  problemType: string;
+  description: string;
+  measures?: string;
+  status: string;
+  deadline?: string;
+  completedDate?: string;
+  handler?: string;
+  resultPhoto?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface CreateSupplierDto {
+  name: string;
+  contactPerson?: string;
+  phone?: string;
+  address?: string;
+  businessLicense?: string;
+  isActive?: boolean;
+}
+
+export interface CreateIngredientBatchDto {
+  batchNumber: string;
+  ingredientName: string;
+  quantity: number;
+  unit?: string;
+  supplierId: number;
+  productionDate: string;
+  expirationDate: string;
+  receiveDate: string;
+  acceptancePhoto?: string;
+  invoicePhoto?: string;
+  status?: string;
+  remark?: string;
+}
+
+export interface CreateRecipeDto {
+  date: string;
+  mealType: string;
+  dishName: string;
+  description?: string;
+  ingredientBatchIds?: number[];
+  photo?: string;
+  status?: string;
+}
+
+export interface CreateSampleDto {
+  sampleBoxNumber: string;
+  date: string;
+  mealType: string;
+  dishName: string;
+  sampleTime: string;
+  sampler: string;
+  photo?: string;
+  status?: string;
+  disposeTime?: string;
+}
+
+export interface CreateClassroomMealDto {
+  date: string;
+  className: string;
+  mealType: string;
+  allergies?: string;
+  tempRestrictions?: string;
+  leftovers?: string;
+  leftoverCount?: number;
+  recorder?: string;
+  remark?: string;
+}
+
+export interface CreateEscortReviewDto {
+  date: string;
+  parentName: string;
+  className?: string;
+  rating: number;
+  photo?: string;
+  suggestion?: string;
+  isNegative?: boolean;
+}
+
+export interface CreateRectificationDto {
+  alertType: string;
+  relatedId?: number;
+  problemType: string;
+  description: string;
+  measures?: string;
+  status?: string;
+  deadline?: string;
+  completedDate?: string;
+  handler?: string;
+  resultPhoto?: string;
+}
+
+export interface CreateAlertDto {
+  type: string;
+  message: string;
+  status?: string;
+  relatedId?: number;
+  alertDate?: string;
+  hasRectification?: boolean;
+}
+
+export interface AllergyRiskResult {
+  date: string;
+  totalCount: number;
+  allergyCount: number;
+  allergyList: ClassroomMeal[];
+}
+
+export interface EscortReviewStatistics {
+  date?: string;
+  totalCount: number;
+  averageRating: number;
+  negativeCount: number;
+  negativeList: EscortReview[];
+}
+
+export interface RecipeByDate {
+  breakfast: Recipe[];
+  lunch: Recipe[];
+  dinner: Recipe[];
+}
+
+export interface PaginatedResult<T> {
+  list: T[];
+  items?: T[];
+  data?: T[];
+  total: number;
+  page: number;
+  pageSize: number;
 }

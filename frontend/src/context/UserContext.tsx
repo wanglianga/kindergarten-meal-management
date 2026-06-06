@@ -8,7 +8,8 @@ interface UserContextType {
   login: (token: string, user: User) => void;
   logout: () => void;
   setUser: (user: User | null) => void;
-  hasRole: (roles: UserRole[]) => boolean;
+  hasRole(role: UserRole): boolean;
+  hasRole(roles: UserRole[]): boolean;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -47,10 +48,13 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     localStorage.removeItem('user');
   };
 
-  const hasRole = (roles: UserRole[]) => {
+  function hasRole(role: UserRole): boolean;
+  function hasRole(roles: UserRole[]): boolean;
+  function hasRole(roleOrRoles: UserRole | UserRole[]): boolean {
     if (!user) return false;
+    const roles = Array.isArray(roleOrRoles) ? roleOrRoles : [roleOrRoles];
     return roles.includes(user.role);
-  };
+  }
 
   return (
     <UserContext.Provider value={{ user, token, loading, login, logout, setUser, hasRole }}>

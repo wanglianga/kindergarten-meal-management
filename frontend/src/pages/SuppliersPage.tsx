@@ -17,23 +17,29 @@ import {
 import type { ColumnsType } from 'antd/es/table';
 import { PlusOutlined, EditOutlined, DeleteOutlined, WarningOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
-import { useUser } from '../context/UserContext';
+import { useUser } from '@/context/UserContext';
+import type { Dayjs } from 'dayjs';
 import {
   suppliers,
   ingredientBatches,
+} from '@/api';
+import type {
   Supplier as SupplierType,
   IngredientBatch as IngredientBatchType,
   CreateSupplierDto,
   CreateIngredientBatchDto,
-} from '../api';
+} from '@/api';
 
 interface SupplierFormData extends CreateSupplierDto {}
-interface BatchFormData extends CreateIngredientBatchDto {}
+interface BatchFormData extends Omit<CreateIngredientBatchDto, 'productionDate' | 'expirationDate' | 'receiveDate'> {
+  productionDate: Dayjs;
+  expirationDate: Dayjs;
+  receiveDate: Dayjs;
+}
 
 const SuppliersPage: React.FC = () => {
   const { hasRole } = useUser();
   const isLogistics = hasRole('logistics');
-  const isSupervisor = hasRole('supervisor');
   const canEditSupplier = isLogistics;
   const canEditBatch = isLogistics;
 
@@ -60,8 +66,8 @@ const SuppliersPage: React.FC = () => {
   const fetchSuppliers = async () => {
     try {
       setLoadingSupplier(true);
-      const { data } = await suppliers.getAll();
-      setSupplierList(data);
+      const result = await suppliers.list();
+      setSupplierList(result.items || result.list || []);
     } catch (error) {
       message.error('获取供应商列表失败');
     } finally {
@@ -76,8 +82,8 @@ const SuppliersPage: React.FC = () => {
       if (keyword) params.keyword = keyword;
       if (supplierFilter) params.supplierId = supplierFilter;
       if (statusFilter) params.status = statusFilter;
-      const { data } = await ingredientBatches.getAll(params);
-      setBatchList(data);
+      const result = await ingredientBatches.list(params);
+      setBatchList(result.items || result.list || []);
     } catch (error) {
       message.error('获取食材批次列表失败');
     } finally {
@@ -87,7 +93,7 @@ const SuppliersPage: React.FC = () => {
 
   const fetchExpiringBatches = async () => {
     try {
-      const { data } = await ingredientBatches.getExpiring();
+      const data = await ingredientBatches.getExpiring();
       setExpiringList(data);
     } catch (error) {
       message.error('获取即将过期批次失败');
@@ -138,7 +144,7 @@ const SuppliersPage: React.FC = () => {
 
   const handleDeleteSupplier = async (id: number) => {
     try {
-      await suppliers.delete(id);
+      await suppliers.remove(id);
       message.success('删除成功');
       fetchSuppliers();
     } catch (error) {
@@ -197,7 +203,7 @@ const SuppliersPage: React.FC = () => {
 
   const handleDeleteBatch = async (id: number) => {
     try {
-      await ingredientBatches.delete(id);
+      await ingredientBatches.remove(id);
       message.success('删除成功');
       fetchBatches();
     } catch (error) {

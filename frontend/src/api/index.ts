@@ -1,7 +1,73 @@
-import axios, { AxiosInstance } from 'axios';
+import axios from 'axios';
+import type {
+  Supplier,
+  IngredientBatch,
+  Recipe,
+  Sample,
+  ClassroomMeal,
+  EscortReview,
+  Rectification,
+  Alert,
+  User,
+  UserRole,
+  CreateSupplierDto,
+  CreateIngredientBatchDto,
+  CreateRecipeDto,
+  CreateSampleDto,
+  CreateClassroomMealDto,
+  CreateEscortReviewDto,
+  CreateRectificationDto,
+  CreateAlertDto,
+  AllergyRiskResult,
+  EscortReviewStatistics,
+  RecipeByDate,
+  PaginatedResult,
+} from '@/types';
 
-const request: AxiosInstance = axios.create({
-  baseURL: 'http://localhost:3000',
+export type {
+  Supplier,
+  IngredientBatch,
+  Recipe,
+  Sample,
+  ClassroomMeal,
+  EscortReview,
+  Rectification,
+  Alert,
+  User,
+  UserRole,
+  CreateSupplierDto,
+  CreateIngredientBatchDto,
+  CreateRecipeDto,
+  CreateSampleDto,
+  CreateClassroomMealDto,
+  CreateEscortReviewDto,
+  CreateRectificationDto,
+  CreateAlertDto,
+  AllergyRiskResult,
+  EscortReviewStatistics,
+  RecipeByDate,
+  PaginatedResult,
+};
+
+export interface ListParams {
+  page?: number;
+  pageSize?: number;
+  [key: string]: any;
+}
+
+export interface LoginResponse {
+  access_token?: string;
+  accessToken?: string;
+  token?: string;
+  user?: User;
+}
+
+export interface CountResponse {
+  count: number;
+}
+
+const request = axios.create({
+  baseURL: '/api',
   timeout: 10000,
 });
 
@@ -33,85 +99,140 @@ request.interceptors.response.use(
 );
 
 export const auth = {
-  login: (username: string, password: string) =>
+  login: (username: string, password: string): Promise<LoginResponse> =>
     request.post('/auth/login', { username, password }),
-  getProfile: () => request.get('/auth/profile'),
-  getUsers: () => request.get('/auth/users'),
+  getProfile: (): Promise<User> => request.get('/auth/profile'),
+  getUsers: (): Promise<User[]> => request.get('/auth/users'),
 };
 
 export const suppliers = {
-  create: (data: any) => request.post('/suppliers', data),
-  list: (params?: any) => request.get('/suppliers', { params }),
-  get: (id: string) => request.get(`/suppliers/${id}`),
-  update: (id: string, data: any) => request.put(`/suppliers/${id}`, data),
-  remove: (id: string) => request.delete(`/suppliers/${id}`),
+  create: (data: CreateSupplierDto): Promise<Supplier> =>
+    request.post('/suppliers', data),
+  list: (params?: ListParams): Promise<PaginatedResult<Supplier>> =>
+    request.get('/suppliers', { params }),
+  getAll: (params?: ListParams): Promise<PaginatedResult<Supplier>> =>
+    request.get('/suppliers', { params }),
+  get: (id: number): Promise<Supplier> => request.get(`/suppliers/${id}`),
+  update: (id: number, data: Partial<CreateSupplierDto>): Promise<Supplier> =>
+    request.put(`/suppliers/${id}`, data),
+  remove: (id: number): Promise<void> => request.delete(`/suppliers/${id}`),
+  delete: (id: number): Promise<void> => request.delete(`/suppliers/${id}`),
 };
 
 export const ingredientBatches = {
-  create: (data: any) => request.post('/ingredient-batches', data),
-  list: (params?: any) => request.get('/ingredient-batches', { params }),
-  get: (id: string) => request.get(`/ingredient-batches/${id}`),
-  update: (id: string, data: any) => request.put(`/ingredient-batches/${id}`, data),
-  remove: (id: string) => request.delete(`/ingredient-batches/${id}`),
-  getExpiring: () => request.get('/ingredient-batches/alert/expiring'),
+  create: (data: CreateIngredientBatchDto): Promise<IngredientBatch> =>
+    request.post('/ingredient-batches', data),
+  list: (params?: ListParams): Promise<PaginatedResult<IngredientBatch>> =>
+    request.get('/ingredient-batches', { params }),
+  getAll: (params?: ListParams): Promise<PaginatedResult<IngredientBatch>> =>
+    request.get('/ingredient-batches', { params }),
+  get: (id: number): Promise<IngredientBatch> =>
+    request.get(`/ingredient-batches/${id}`),
+  update: (
+    id: number,
+    data: Partial<CreateIngredientBatchDto>
+  ): Promise<IngredientBatch> => request.put(`/ingredient-batches/${id}`, data),
+  remove: (id: number): Promise<void> =>
+    request.delete(`/ingredient-batches/${id}`),
+  delete: (id: number): Promise<void> =>
+    request.delete(`/ingredient-batches/${id}`),
+  getExpiring: (): Promise<IngredientBatch[]> =>
+    request.get('/ingredient-batches/alert/expiring'),
 };
 
 export const recipes = {
-  create: (data: any) => request.post('/recipes', data),
-  list: (params?: any) => request.get('/recipes', { params }),
-  getByDate: (date: string) => request.get(`/recipes/by-date/${date}`),
-  get: (id: string) => request.get(`/recipes/${id}`),
-  update: (id: string, data: any) => request.put(`/recipes/${id}`, data),
-  remove: (id: string) => request.delete(`/recipes/${id}`),
+  create: (data: CreateRecipeDto): Promise<Recipe> =>
+    request.post('/recipes', data),
+  list: (params?: ListParams): Promise<PaginatedResult<Recipe>> =>
+    request.get('/recipes', { params }),
+  findByDate: (date: string): Promise<RecipeByDate> =>
+    request.get(`/recipes/by-date/${date}`),
+  getByDate: (date: string): Promise<RecipeByDate> =>
+    request.get(`/recipes/by-date/${date}`),
+  get: (id: number): Promise<Recipe> => request.get(`/recipes/${id}`),
+  update: (id: number, data: Partial<CreateRecipeDto>): Promise<Recipe> =>
+    request.put(`/recipes/${id}`, data),
+  remove: (id: number): Promise<void> => request.delete(`/recipes/${id}`),
 };
 
 export const samples = {
-  create: (data: any) => request.post('/samples', data),
-  list: (params?: any) => request.get('/samples', { params }),
-  get: (id: string) => request.get(`/samples/${id}`),
-  update: (id: string, data: any) => request.put(`/samples/${id}`, data),
-  remove: (id: string) => request.delete(`/samples/${id}`),
-  destroy: (id: string) => request.post(`/samples/${id}/destroy`),
-  getExpired: () => request.get('/samples/alert/expired'),
+  create: (data: CreateSampleDto): Promise<Sample> =>
+    request.post('/samples', data),
+  list: (params?: ListParams): Promise<PaginatedResult<Sample>> =>
+    request.get('/samples', { params }),
+  get: (id: number): Promise<Sample> => request.get(`/samples/${id}`),
+  update: (id: number, data: Partial<CreateSampleDto>): Promise<Sample> =>
+    request.put(`/samples/${id}`, data),
+  remove: (id: number): Promise<void> => request.delete(`/samples/${id}`),
+  destroy: (id: number): Promise<Sample> =>
+    request.post(`/samples/${id}/destroy`),
+  getExpired: (): Promise<Sample[]> => request.get('/samples/alert/expired'),
 };
 
 export const classroomMeals = {
-  create: (data: any) => request.post('/classroom-meals', data),
-  list: (params?: any) => request.get('/classroom-meals', { params }),
-  get: (id: string) => request.get(`/classroom-meals/${id}`),
-  update: (id: string, data: any) => request.put(`/classroom-meals/${id}`, data),
-  remove: (id: string) => request.delete(`/classroom-meals/${id}`),
-  getAllergyRisks: (date: string) => request.get(`/classroom-meals/alert/allergies/${date}`),
+  create: (data: CreateClassroomMealDto): Promise<ClassroomMeal> =>
+    request.post('/classroom-meals', data),
+  list: (params?: ListParams): Promise<PaginatedResult<ClassroomMeal>> =>
+    request.get('/classroom-meals', { params }),
+  get: (id: number): Promise<ClassroomMeal> =>
+    request.get(`/classroom-meals/${id}`),
+  update: (
+    id: number,
+    data: Partial<CreateClassroomMealDto>
+  ): Promise<ClassroomMeal> => request.put(`/classroom-meals/${id}`, data),
+  remove: (id: number): Promise<void> =>
+    request.delete(`/classroom-meals/${id}`),
+  getAllergyRisks: (date: string): Promise<AllergyRiskResult> =>
+    request.get(`/classroom-meals/alert/allergies/${date}`),
 };
 
 export const escortReviews = {
-  create: (data: any) => request.post('/escort-reviews', data),
-  list: (params?: any) => request.get('/escort-reviews', { params }),
-  get: (id: string) => request.get(`/escort-reviews/${id}`),
-  update: (id: string, data: any) => request.put(`/escort-reviews/${id}`, data),
-  remove: (id: string) => request.delete(`/escort-reviews/${id}`),
-  getStatistics: (date?: string) =>
+  create: (data: CreateEscortReviewDto): Promise<EscortReview> =>
+    request.post('/escort-reviews', data),
+  list: (params?: ListParams): Promise<PaginatedResult<EscortReview>> =>
+    request.get('/escort-reviews', { params }),
+  get: (id: number): Promise<EscortReview> =>
+    request.get(`/escort-reviews/${id}`),
+  update: (
+    id: number,
+    data: Partial<CreateEscortReviewDto>
+  ): Promise<EscortReview> => request.put(`/escort-reviews/${id}`, data),
+  remove: (id: number): Promise<void> =>
+    request.delete(`/escort-reviews/${id}`),
+  getStatistics: (date?: string): Promise<EscortReviewStatistics> =>
     request.get('/escort-reviews/statistics', { params: date ? { date } : {} }),
 };
 
 export const rectifications = {
-  create: (data: any) => request.post('/rectifications', data),
-  list: (params?: any) => request.get('/rectifications', { params }),
-  get: (id: string) => request.get(`/rectifications/${id}`),
-  update: (id: string, data: any) => request.put(`/rectifications/${id}`, data),
-  remove: (id: string) => request.delete(`/rectifications/${id}`),
-  getPendingCount: () => request.get('/rectifications/pending-count'),
+  create: (data: CreateRectificationDto): Promise<Rectification> =>
+    request.post('/rectifications', data),
+  list: (params?: ListParams): Promise<PaginatedResult<Rectification>> =>
+    request.get('/rectifications', { params }),
+  get: (id: number): Promise<Rectification> =>
+    request.get(`/rectifications/${id}`),
+  update: (
+    id: number,
+    data: Partial<CreateRectificationDto>
+  ): Promise<Rectification> => request.put(`/rectifications/${id}`, data),
+  remove: (id: number): Promise<void> =>
+    request.delete(`/rectifications/${id}`),
+  getPendingCount: (): Promise<CountResponse> =>
+    request.get('/rectifications/pending-count'),
 };
 
 export const alerts = {
-  create: (data: any) => request.post('/alerts', data),
-  list: (status?: string) =>
+  create: (data: CreateAlertDto): Promise<Alert> =>
+    request.post('/alerts', data),
+  list: (status?: string): Promise<Alert[]> =>
     request.get('/alerts', { params: status ? { status } : {} }),
-  get: (id: string) => request.get(`/alerts/${id}`),
-  update: (id: string, data: any) => request.put(`/alerts/${id}`, data),
-  resolve: (id: string) => request.post(`/alerts/${id}/resolve`),
-  remove: (id: string) => request.delete(`/alerts/${id}`),
-  getActiveCount: () => request.get('/alerts/active-count'),
+  get: (id: number): Promise<Alert> => request.get(`/alerts/${id}`),
+  update: (id: number, data: Partial<CreateAlertDto>): Promise<Alert> =>
+    request.put(`/alerts/${id}`, data),
+  resolve: (id: number): Promise<Alert> =>
+    request.post(`/alerts/${id}/resolve`),
+  remove: (id: number): Promise<void> => request.delete(`/alerts/${id}`),
+  getActiveCount: (): Promise<CountResponse> =>
+    request.get('/alerts/active-count'),
 };
 
 export default request;

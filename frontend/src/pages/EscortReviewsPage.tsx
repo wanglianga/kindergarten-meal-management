@@ -19,15 +19,14 @@ import {
   Divider,
 } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import dayjs, { Dayjs } from 'dayjs';
+import type { Dayjs } from 'dayjs';
 import { useUser } from '@/context/UserContext';
 import {
   escortReviews,
-  EscortReview,
-  CreateEscortReviewDto,
-  EscortReviewStatistics,
+  type EscortReview,
+  type CreateEscortReviewDto,
+  type EscortReviewStatistics,
 } from '@/api';
-import type { UserRole } from '@/types';
 
 const { TextArea } = Input;
 const { RangePicker } = DatePicker;
@@ -57,8 +56,8 @@ const EscortReviewsPage: React.FC = () => {
   const [statisticsLoading, setStatisticsLoading] = useState(false);
   const [statisticsDate, setStatisticsDate] = useState<Dayjs | null>(null);
 
-  const canCreate = hasRole(['parent' as UserRole, 'logistics' as UserRole]);
-  const canViewStatistics = hasRole(['logistics' as UserRole, 'regulator' as UserRole]);
+  const canCreate = hasRole(['parent', 'logistics']);
+  const canViewStatistics = hasRole(['logistics', 'regulator']);
 
   const fetchData = async () => {
     setLoading(true);

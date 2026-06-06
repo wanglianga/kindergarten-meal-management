@@ -1,25 +1,16 @@
-FROM node:18-alpine AS builder
+FROM node:18-alpine
 
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci
+RUN npm ci --registry=https://registry.npmmirror.com || npm ci
 
 COPY . .
 RUN npm run build
 
-FROM node:18-alpine AS production
-
-WORKDIR /app
-
-COPY package*.json ./
-RUN npm ci --production
-
-COPY --from=builder /app/dist ./dist
-COPY . .
-
 RUN mkdir -p /app/data
+RUN node dist/seed.js 2>/dev/null || echo "Seed skipped"
 
 EXPOSE 3000
 
-CMD ["npm", "run", "start:docker"]
+CMD ["sh", "-c", "node dist/seed.js 2>/dev/null; node dist/main.js"]

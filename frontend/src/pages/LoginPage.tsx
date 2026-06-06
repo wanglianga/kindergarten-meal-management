@@ -2,9 +2,9 @@ import React from 'react';
 import { Form, Input, Button, Card, Typography, Alert, Space } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { auth } from '../api';
-import { useUser } from '../context/UserContext';
-import type { User } from '../types';
+import { auth } from '@/api';
+import { useUser } from '@/context/UserContext';
+import type { User } from '@/types';
 
 const { Title, Text } = Typography;
 
@@ -19,7 +19,7 @@ const LoginPage: React.FC = () => {
     setError(null);
     try {
       const res: any = await auth.login(values.username, values.password);
-      const token = res.accessToken || res.token;
+      const token = res.access_token || res.accessToken || res.token;
       const userData: User = res.user || res.data?.user || res;
       if (token && userData) {
         login(token, userData);

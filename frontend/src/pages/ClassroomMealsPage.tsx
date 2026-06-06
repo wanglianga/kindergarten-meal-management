@@ -21,11 +21,9 @@ import dayjs, { Dayjs } from 'dayjs';
 import { useUser } from '@/context/UserContext';
 import {
   classroomMeals,
-  ClassroomMeal,
-  CreateClassroomMealDto,
-  AllergyRiskResult,
+  type ClassroomMeal,
+  type AllergyRiskResult,
 } from '@/api';
-import type { UserRole } from '@/types';
 
 const { TextArea } = Input;
 
@@ -59,15 +57,15 @@ const ClassroomMealsPage: React.FC = () => {
 
   const [modalOpen, setModalOpen] = useState(false);
   const [editingRecord, setEditingRecord] = useState<ClassroomMeal | null>(null);
-  const [form] = Form.useForm<CreateClassroomMealDto>();
+  const [form] = Form.useForm<any>();
 
   const [allergyModalOpen, setAllergyModalOpen] = useState(false);
   const [allergyCheckDate, setAllergyCheckDate] = useState<Dayjs | null>(null);
   const [allergyRiskData, setAllergyRiskData] = useState<AllergyRiskResult | null>(null);
   const [allergyLoading, setAllergyLoading] = useState(false);
 
-  const canManage = hasRole(['teacher' as UserRole, 'logistics' as UserRole]);
-  const canCheckAllergy = hasRole(['logistics' as UserRole, 'regulator' as UserRole]);
+  const canManage = hasRole(['teacher', 'logistics']);
+  const canCheckAllergy = hasRole(['logistics', 'regulator']);
 
   const fetchData = async () => {
     setLoading(true);
@@ -143,7 +141,7 @@ const ClassroomMealsPage: React.FC = () => {
   const handleModalOk = async () => {
     try {
       const values = await form.validateFields();
-      const payload: CreateClassroomMealDto = {
+      const payload: any = {
         ...values,
         date: values.date ? (values.date as unknown as Dayjs).format('YYYY-MM-DD') : '',
       };

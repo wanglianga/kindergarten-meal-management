@@ -30,8 +30,10 @@ export class AuthService {
       role: user.role,
       realName: user.realName,
     };
+    const { password, ...userInfo } = user;
     return {
       access_token: this.jwtService.sign(payload),
+      user: userInfo,
     };
   }
 
