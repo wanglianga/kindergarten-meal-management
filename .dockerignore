@@ -1,0 +1,13 @@
+**/node_modules
+**/dist
+**/build
+**/data
+**/*.log
+**/.env
+**/.env.local
+**/.DS_Store
+**/npm-debug.log*
+.git
+.gitignore
+README.md
+.done
